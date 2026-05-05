@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import connectDB from './config/db.js';
 import authRoutes from './routes/auth.js';
 
+
 const app = express();
 
 // ✅ DB connect
