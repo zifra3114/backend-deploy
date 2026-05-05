@@ -7,29 +7,43 @@ import authRoutes from './routes/auth.js';
 
 const app = express();
 
-// DB connect
+// ✅ DB connect
 connectDB();
 
-// Middleware
+// ✅ CORS FIX (best setup)
+const allowedOrigins = [
+  'http://localhost:5173', // local frontend
+  'https://blog-auth-frontend.vercel.app' // deployed frontend (baad me use hoga)
+];
+
 app.use(cors({
-  origin: [
-    process.env.FRONTEND_URL,
-    'https://blog-auth-frontend.vercel.app'
-  ],
+  origin: function (origin, callback) {
+    // allow requests with no origin (Postman etc)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error('CORS not allowed'));
+    }
+  },
   credentials: true
 }));
 
+// ✅ middleware
 app.use(express.json());
 app.use(cookieParser());
 
-// Routes
+// ✅ routes
 app.use('/api/auth', authRoutes);
 
-// Test route
+// ✅ test route
 app.get('/', (req, res) => {
   res.send('API is running...');
 });
 
-// ❌ REMOVE app.listen
-// ✅ EXPORT for Vercel
+// ❌ IMPORTANT: Vercel me listen nahi hota
+// app.listen(...) REMOVE
+
+// ✅ EXPORT (Vercel ke liye)
 export default app;
